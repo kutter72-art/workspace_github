@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<p:handoutMaster xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
+  <p:cSld>
+    <p:bg>
+      <p:bgPr>
+        <a:solidFill>
+          <a:schemeClr val="bg1"/>
+        </a:solidFill>
+        <a:effectLst/>
+      </p:bgPr>
+    </p:bg>
+    <p:spTree>
+      <p:nvGrpSpPr>
+        <p:cNvPr id="1" name=""/>
+        <p:cNvGrpSpPr/>
+        <p:nvPr/>
+      </p:nvGrpSpPr>
+      <p:grpSpPr>
+        <a:xfrm>
+          <a:off x="0" y="0"/>
+          <a:ext cx="0" cy="0"/>
+          <a:chOff x="0" y="0"/>
+          <a:chExt cx="0" cy="0"/>
+        </a:xfrm>
+      </p:grpSpPr>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="48130" name="Rectangle 2"/>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1" noChangeArrowheads="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph type="hdr" sz="quarter"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr bwMode="auto">
+          <a:xfrm>
+            <a:off x="4" y="2"/>
+            <a:ext cx="4306740" cy="339912"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln w="9525">
+            <a:noFill/>
+            <a:miter lim="800000"/>
+            <a:headEnd/>
+            <a:tailEnd/>
+          </a:ln>
+          <a:effectLst/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr vert="horz" wrap="square" lIns="92678" tIns="46341" rIns="92678" bIns="46341" numCol="1" anchor="t" anchorCtr="0" compatLnSpc="1">
+            <a:prstTxWarp prst="textNoShape">
+              <a:avLst/>
+            </a:prstTxWarp>
+          </a:bodyPr>
+          <a:lstStyle>
+            <a:lvl1pPr>
+              <a:defRPr sz="1200"/>
+            </a:lvl1pPr>
+          </a:lstStyle>
+          <a:p>
+            <a:pPr>
+              <a:defRPr/>
+            </a:pPr>
+            <a:endParaRPr lang="en-US" altLang="ko-KR" dirty="0">
+              <a:latin typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+              <a:ea typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+            </a:endParaRPr>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="48131" name="Rectangle 3"/>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1" noChangeArrowheads="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph type="dt" sz="quarter" idx="1"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr bwMode="auto">
+          <a:xfrm>
+            <a:off x="5630301" y="2"/>
+            <a:ext cx="4306740" cy="339912"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln w="9525">
+            <a:noFill/>
+            <a:miter lim="800000"/>
+            <a:headEnd/>
+            <a:tailEnd/>
+          </a:ln>
+          <a:effectLst/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr vert="horz" wrap="square" lIns="92678" tIns="46341" rIns="92678" bIns="46341" numCol="1" anchor="t" anchorCtr="0" compatLnSpc="1">
+            <a:prstTxWarp prst="textNoShape">
+              <a:avLst/>
+            </a:prstTxWarp>
+          </a:bodyPr>
+          <a:lstStyle>
+            <a:lvl1pPr algn="r">
+              <a:defRPr sz="1200"/>
+            </a:lvl1pPr>
+          </a:lstStyle>
+          <a:p>
+            <a:pPr>
+              <a:defRPr/>
+            </a:pPr>
+            <a:endParaRPr lang="en-US" altLang="ko-KR" dirty="0">
+              <a:latin typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+              <a:ea typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+            </a:endParaRPr>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="48132" name="Rectangle 4"/>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1" noChangeArrowheads="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph type="ftr" sz="quarter" idx="2"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr bwMode="auto">
+          <a:xfrm>
+            <a:off x="4" y="6466171"/>
+            <a:ext cx="4306740" cy="339912"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln w="9525">
+            <a:noFill/>
+            <a:miter lim="800000"/>
+            <a:headEnd/>
+            <a:tailEnd/>
+          </a:ln>
+          <a:effectLst/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr vert="horz" wrap="square" lIns="92678" tIns="46341" rIns="92678" bIns="46341" numCol="1" anchor="b" anchorCtr="0" compatLnSpc="1">
+            <a:prstTxWarp prst="textNoShape">
+              <a:avLst/>
+            </a:prstTxWarp>
+          </a:bodyPr>
+          <a:lstStyle>
+            <a:lvl1pPr>
+              <a:defRPr sz="1200"/>
+            </a:lvl1pPr>
+          </a:lstStyle>
+          <a:p>
+            <a:pPr>
+              <a:defRPr/>
+            </a:pPr>
+            <a:r>
+              <a:rPr lang="en-US" altLang="ko-KR" dirty="0" smtClean="0">
+                <a:latin typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+                <a:ea typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+              </a:rPr>
+              <a:t>1</a:t>
+            </a:r>
+            <a:endParaRPr lang="en-US" altLang="ko-KR" dirty="0">
+              <a:latin typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+              <a:ea typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+            </a:endParaRPr>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+      <p:sp>
+        <p:nvSpPr>
+          <p:cNvPr id="48133" name="Rectangle 5"/>
+          <p:cNvSpPr>
+            <a:spLocks noGrp="1" noChangeArrowheads="1"/>
+          </p:cNvSpPr>
+          <p:nvPr>
+            <p:ph type="sldNum" sz="quarter" idx="3"/>
+          </p:nvPr>
+        </p:nvSpPr>
+        <p:spPr bwMode="auto">
+          <a:xfrm>
+            <a:off x="5630301" y="6466171"/>
+            <a:ext cx="4306740" cy="339912"/>
+          </a:xfrm>
+          <a:prstGeom prst="rect">
+            <a:avLst/>
+          </a:prstGeom>
+          <a:noFill/>
+          <a:ln w="9525">
+            <a:noFill/>
+            <a:miter lim="800000"/>
+            <a:headEnd/>
+            <a:tailEnd/>
+          </a:ln>
+          <a:effectLst/>
+        </p:spPr>
+        <p:txBody>
+          <a:bodyPr vert="horz" wrap="square" lIns="92678" tIns="46341" rIns="92678" bIns="46341" numCol="1" anchor="b" anchorCtr="0" compatLnSpc="1">
+            <a:prstTxWarp prst="textNoShape">
+              <a:avLst/>
+            </a:prstTxWarp>
+          </a:bodyPr>
+          <a:lstStyle>
+            <a:lvl1pPr algn="r">
+              <a:defRPr sz="1200"/>
+            </a:lvl1pPr>
+          </a:lstStyle>
+          <a:p>
+            <a:pPr>
+              <a:defRPr/>
+            </a:pPr>
+            <a:fld id="{0D8787D3-E3BE-411B-8CBD-52C0E9B041B0}" type="slidenum">
+              <a:rPr lang="en-US" altLang="ko-KR">
+                <a:latin typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+                <a:ea typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+              </a:rPr>
+              <a:pPr>
+                <a:defRPr/>
+              </a:pPr>
+              <a:t>‹#›</a:t>
+            </a:fld>
+            <a:endParaRPr lang="en-US" altLang="ko-KR" dirty="0">
+              <a:latin typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+              <a:ea typeface="맑은 고딕" panose="020B0503020000020004" pitchFamily="50" charset="-127"/>
+            </a:endParaRPr>
+          </a:p>
+        </p:txBody>
+      </p:sp>
+    </p:spTree>
+  </p:cSld>
+  <p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/>
+  <p:hf sldNum="0" hdr="0" dt="0"/>
+</p:handoutMaster>

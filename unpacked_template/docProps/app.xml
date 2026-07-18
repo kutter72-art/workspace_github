@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
+  <Template/>
+  <TotalTime>36294</TotalTime>
+  <Words>13</Words>
+  <Application>Microsoft Office PowerPoint</Application>
+  <PresentationFormat>화면 슬라이드 쇼(4:3)</PresentationFormat>
+  <Paragraphs>5</Paragraphs>
+  <Slides>1</Slides>
+  <Notes>1</Notes>
+  <HiddenSlides>0</HiddenSlides>
+  <MMClips>0</MMClips>
+  <ScaleCrop>false</ScaleCrop>
+  <HeadingPairs>
+    <vt:vector size="8" baseType="variant">
+      <vt:variant>
+        <vt:lpstr>사용한 글꼴</vt:lpstr>
+      </vt:variant>
+      <vt:variant>
+        <vt:i4>5</vt:i4>
+      </vt:variant>
+      <vt:variant>
+        <vt:lpstr>테마</vt:lpstr>
+      </vt:variant>
+      <vt:variant>
+        <vt:i4>8</vt:i4>
+      </vt:variant>
+      <vt:variant>
+        <vt:lpstr>슬라이드 제목</vt:lpstr>
+      </vt:variant>
+      <vt:variant>
+        <vt:i4>1</vt:i4>
+      </vt:variant>
+      <vt:variant>
+        <vt:lpstr>재구성한 쇼</vt:lpstr>
+      </vt:variant>
+      <vt:variant>
+        <vt:i4>1</vt:i4>
+      </vt:variant>
+    </vt:vector>
+  </HeadingPairs>
+  <TitlesOfParts>
+    <vt:vector size="15" baseType="lpstr">
+      <vt:lpstr>HY견고딕</vt:lpstr>
+      <vt:lpstr>굴림</vt:lpstr>
+      <vt:lpstr>돋움</vt:lpstr>
+      <vt:lpstr>맑은 고딕</vt:lpstr>
+      <vt:lpstr>Arial</vt:lpstr>
+      <vt:lpstr>Office 테마</vt:lpstr>
+      <vt:lpstr>6_디자인 사용자 지정</vt:lpstr>
+      <vt:lpstr>5_디자인 사용자 지정</vt:lpstr>
+      <vt:lpstr>3_디자인 사용자 지정</vt:lpstr>
+      <vt:lpstr>4_디자인 사용자 지정</vt:lpstr>
+      <vt:lpstr>2_디자인 사용자 지정</vt:lpstr>
+      <vt:lpstr>1_디자인 사용자 지정</vt:lpstr>
+      <vt:lpstr>디자인 사용자 지정</vt:lpstr>
+      <vt:lpstr>PowerPoint 프레젠테이션</vt:lpstr>
+      <vt:lpstr>재구성한 쇼 1</vt:lpstr>
+    </vt:vector>
+  </TitlesOfParts>
+  <Company>고구려</Company>
+  <LinksUpToDate>false</LinksUpToDate>
+  <SharedDoc>false</SharedDoc>
+  <HyperlinksChanged>false</HyperlinksChanged>
+  <AppVersion>16.0000</AppVersion>
+</Properties>
