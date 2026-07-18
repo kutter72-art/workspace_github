@@ -386,6 +386,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   <button class="tb-btn" onclick="openImport()">📥 가져오기 (JSON)</button>
   <div class="tb-sep"></div>
   <button class="tb-btn primary" onclick="savePptx()" id="btnPptx">💾 PPTX 저장</button>
+  <button class="tb-btn" onclick="verifyContent()" id="btnVerify">🔍 내용 검증</button>
   <div class="tb-sep"></div>
   <button class="tb-btn danger" onclick="confirmClearAll()">🗑 전체 초기화</button>
   <span id="statusMsg">자동저장: 대기 중</span>
@@ -1353,5 +1354,6 @@ async function savePptx() {
 }
 
 </script>
+<script src="verify-client.js"></script>
 </body>
 </html>
