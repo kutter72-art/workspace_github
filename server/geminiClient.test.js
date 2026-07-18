@@ -31,3 +31,13 @@ test('callGemini returns an error when the API responds with a non-OK status', a
   );
   assert.strictEqual(result.error, 'Gemini API 오류 (429): rate limited');
 });
+
+test('callGemini returns an error instead of throwing when fetch itself rejects', async () => {
+  const fakeFetch = async () => { throw new Error('network down'); };
+  const result = await callGemini(
+    [{ month: 7, week: 3, team: '팀', leftText: 'a', rightText: 'b' }],
+    'fake-key',
+    fakeFetch
+  );
+  assert.strictEqual(result.error, 'Gemini 호출 실패: network down');
+});
