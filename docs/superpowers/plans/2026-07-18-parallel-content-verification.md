@@ -594,18 +594,30 @@ async function verifyContent() {
         };
       })
     };
-    const res = await fetch(VERIFY_SERVER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error('서버 응답 오류: ' + res.status);
+
+    let res;
+    try {
+      res = await fetch(VERIFY_SERVER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (networkErr) {
+      setStatus('검증 서버(localhost:3001)에 연결할 수 없습니다. server 폴더에서 서버를 먼저 실행하세요.');
+      return;
+    }
+
+    if (!res.ok) {
+      setStatus('검증 서버 응답 오류 (' + res.status + '). server 폴더의 콘솔 로그를 확인하세요.');
+      return;
+    }
+
     const data = await res.json();
     renderVerifyResults(data);
     setStatus('내용 검증 완료');
   } catch (e) {
     console.error(e);
-    setStatus('검증 서버(localhost:3001)에 연결할 수 없습니다. server 폴더에서 서버를 먼저 실행하세요.');
+    setStatus('내용 검증 중 오류가 발생했습니다: ' + e.message);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '🔍 내용 검증'; }
   }
