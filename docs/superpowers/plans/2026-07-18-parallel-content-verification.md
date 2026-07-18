@@ -4,7 +4,7 @@
 
 **Goal:** Add a "내용 검증" (content verification) feature that sends generated PPTX slide text to a local Node.js/Express proxy server, which calls Gemini 2.5 Flash and GPT-4o mini in parallel, and displays both models' findings side-by-side in the browser.
 
-**Architecture:** A new `server/` Express app exposes `POST /verify`. It calls two provider-specific client modules (`geminiClient.js`, `gptClient.js`) via `Promise.allSettled` so one failing provider doesn't block the other. Both clients share a `promptBuilder.js` module for prompt construction and JSON-response parsing. The browser side adds `extractPlainText()`, `verifyContent()`, and `renderVerifyResults()` to `pptx_code.js` (the reference logic file) and mirrors the same additions plus UI wiring (button + results panel) into the actual host file `주간보고서_작성기.html`, following the existing `savePptx()`/`btnPptx` pattern.
+**Architecture:** A new `server/` Express app exposes `POST /verify`. It calls two provider-specific client modules (`geminiClient.js`, `gptClient.js`) via `Promise.allSettled` so one failing provider doesn't block the other. Both clients share a `promptBuilder.js` module for prompt construction and JSON-response parsing. The browser side adds a single new file, `verify-client.js`, containing `extractPlainText()`, `verifyContent()`, and `renderVerifyResults()`, loaded via `<script src="verify-client.js">` from the actual host file `주간보고서_작성기.html` (which does not load `pptx_code.js` via `<script src>` — it inlines an equivalent copy of that logic itself). `pptx_code.js` is not modified by this feature — it is the core OOXML-generation reference file and has no dependency on this UI feature.
 
 **Tech Stack:** Node.js (18+, for built-in `fetch` and `node:test`), Express, cors, dotenv. No new browser dependencies — plain JS, reuses existing `htmlParas()`/`xmlEsc()`.
 
@@ -520,38 +520,39 @@ git commit -m "feat: wire POST /verify route calling Gemini and GPT in parallel"
 
 ---
 
-### Task 5: Client-side text extraction and verification call (`pptx_code.js`)
+### Task 5: Shared browser verification module (`verify-client.js`)
 
 **Files:**
-- Modify: `pptx_code.js` (append after `savePptx()`, which ends at `pptx_code.js:210`)
+- Create: `verify-client.js`
 
 **Interfaces:**
-- Consumes: `htmlParas(html)` (existing, `pptx_code.js:14`), `xmlEsc(s)` (existing, `pptx_code.js:8`), global `slides` array (existing, provided by host page), `setStatus(msg)` (existing, provided by host page)
+- Consumes (all provided by whatever host page loads this file via `<script src="verify-client.js">`, loaded *after* the host's own script that defines them): `htmlParas(html)` (returns `{type, text}[]`), `xmlEsc(s)`, global `slides` array (`{id, month, week, team, leftHtml, rightHtml}[]`), `setStatus(msg)`, `sanitizeHtml(html)`
 - Produces: `extractPlainText(html): string`, `async function verifyContent(): Promise<void>`, `renderVerifyResults(data): void` — for use by the host HTML's `btnVerify` button (Task 6)
 
-- [ ] **Step 1: Add `extractPlainText()` right after `htmlParas()`**
+This is a **new standalone file**, not an addition to `pptx_code.js`. The actual host page (`주간보고서_작성기.html`, wired in Task 6) does not load `pptx_code.js` via `<script src>` — it inlines an equivalent copy of `htmlParas`/`buildSlideXml`/`savePptx` itself. Putting the verify feature in its own file and loading it once via `<script src>` avoids duplicating this new code into two places. `pptx_code.js` is not touched by this task.
 
-In `pptx_code.js`, after the closing brace of `htmlParas()` (line 50) and before `parasToOoxml()` (line 52), insert:
+- [ ] **Step 1: Create `verify-client.js`**
 
 ```js
+const VERIFY_SERVER_URL = 'http://localhost:3001/verify';
+
 function extractPlainText(html) {
   return htmlParas(html)
     .filter(function(p) { return p.type !== 'empty'; })
     .map(function(p) { return p.text; })
     .join('\n');
 }
-```
-
-- [ ] **Step 2: Add `verifyContent()` and result rendering after `savePptx()`**
-
-At the end of `pptx_code.js` (after the closing brace of `savePptx()`, line 210), append:
-
-```js
-
-const VERIFY_SERVER_URL = 'http://localhost:3001/verify';
 
 async function verifyContent() {
   if (!slides.length) { setStatus('검증할 슬라이드가 없습니다.'); return; }
+
+  slides.forEach(function(s) {
+    const l = document.getElementById('left_' + s.id);
+    const r = document.getElementById('right_' + s.id);
+    if (l) s.leftHtml = sanitizeHtml(l.innerHTML);
+    if (r) s.rightHtml = sanitizeHtml(r.innerHTML);
+  });
+
   const btn = document.getElementById('btnVerify');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ 검증 중...'; }
   setStatus('내용 검증 중...');
@@ -618,27 +619,25 @@ function renderVerifyResults(data) {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 2: Commit**
 
 ```bash
-git add pptx_code.js
-git commit -m "feat: add client-side verifyContent() calling local verify server"
+git add verify-client.js
+git commit -m "feat: add shared verify-client.js for content verification"
 ```
 
-(No automated test here — `pptx_code.js` has no test harness and is a reference file injected into a host page; manual browser verification happens in Task 6 where it's wired to a real button.)
+(No automated test here — this file only runs inside a browser DOM with host-provided globals; manual browser verification happens in Task 6 where it's wired to a real button.)
 
 ---
 
 ### Task 6: Wire the feature into the host page (`주간보고서_작성기.html`)
 
 **Files:**
-- Modify: `주간보고서_작성기.html` (toolbar around line 388, first `<script>` block ends at line 375, main script starts at line 413)
+- Modify: `주간보고서_작성기.html` (toolbar around line 388, first `<script>` block ends at line 375, main script starts at line 413, ends at line 1355)
 
 **Interfaces:**
-- Consumes: `extractPlainText`, `verifyContent`, `renderVerifyColumn`, `renderVerifyResults` (same implementations as Task 5, added inline since this file embeds all logic rather than loading `pptx_code.js` via `<script src>`)
-- Consumes existing: `htmlParas` (`주간보고서_작성기.html:1031`), `xmlEsc`, `slides`, `setStatus`, `sanitizeHtml` (`:995`)
-
-This file already has its own inline copy of `htmlParas`/`buildSlideXml`/`savePptx` (it does not `<script src="pptx_code.js">` — the logic is embedded directly). The same functions from Task 5 must be added here too, plus UI wiring, since this is the file the user actually opens in the browser.
+- Consumes: `verify-client.js` (Task 5) via `<script src="verify-client.js"></script>`
+- Existing globals this file already defines that `verify-client.js` depends on: `htmlParas` (`:1031`), `xmlEsc`, `slides`, `setStatus`, `sanitizeHtml` (`:995`)
 
 - [ ] **Step 1: Add the "내용 검증" button to the toolbar**
 
@@ -659,89 +658,40 @@ Replace with:
   <button class="tb-btn danger" onclick="confirmClearAll()">🗑 전체 초기화</button>
 ```
 
-- [ ] **Step 2: Add `extractPlainText()` next to the existing `htmlParas()`**
+- [ ] **Step 2: Load `verify-client.js` after the main inline script**
 
-Find the closing of `htmlParas()` in the main script block (around line 1031 onward — locate the function and its matching closing `}` before `function parasToOoxml`), and insert immediately after it:
+Find the end of the file:
 
-```js
-function extractPlainText(html) {
-  return htmlParas(html)
-    .filter(function(p) { return p.type !== 'empty'; })
-    .map(function(p) { return p.text; })
-    .join('\n');
-}
-```
-
-- [ ] **Step 3: Append `verifyContent()` and rendering functions at the end of the script**
-
-Find the end of `savePptx()` in this file — its closing brace is immediately followed by:
-
-```js
+```html
 </script>
 </body>
 ```
 
-Insert the same three functions from Task 5 Step 2 (`verifyContent`, `renderVerifyColumn`, `renderVerifyResults`, plus the `VERIFY_SERVER_URL` constant) right before `</script>`. Use identical code — this file's `slides` array has the same `{month, week, team, leftHtml, rightHtml}` shape.
+Replace with:
 
-Additionally, since this file syncs DOM edits into `slides[].leftHtml`/`rightHtml` right before building XML in `savePptx()` (see `주간보고서_작성기.html:1239-1244`), do the same sync at the start of `verifyContent()` so verification reflects unsaved edits:
-
-```js
-async function verifyContent() {
-  if (!slides.length) { setStatus('검증할 슬라이드가 없습니다.'); return; }
-  slides.forEach(function(s) {
-    const l = document.getElementById('left_' + s.id);
-    const r = document.getElementById('right_' + s.id);
-    if (l) s.leftHtml = sanitizeHtml(l.innerHTML);
-    if (r) s.rightHtml = sanitizeHtml(r.innerHTML);
-  });
-  const btn = document.getElementById('btnVerify');
-  if (btn) { btn.disabled = true; btn.textContent = '⏳ 검증 중...'; }
-  setStatus('내용 검증 중...');
-  try {
-    const payload = {
-      slides: slides.map(function(s) {
-        return {
-          month: s.month, week: s.week, team: s.team,
-          leftText: extractPlainText(s.leftHtml),
-          rightText: extractPlainText(s.rightHtml)
-        };
-      })
-    };
-    const res = await fetch(VERIFY_SERVER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error('서버 응답 오류: ' + res.status);
-    const data = await res.json();
-    renderVerifyResults(data);
-    setStatus('내용 검증 완료');
-  } catch (e) {
-    console.error(e);
-    setStatus('검증 서버(localhost:3001)에 연결할 수 없습니다. server 폴더에서 서버를 먼저 실행하세요.');
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '🔍 내용 검증'; }
-  }
-}
+```html
+</script>
+<script src="verify-client.js"></script>
+</body>
 ```
 
-(`renderVerifyColumn`, `renderVerifyResults`, and `VERIFY_SERVER_URL` are unchanged from Task 5 Step 2 — add them as-is.)
+This must come after the closing `</script>` of the main inline script (line 1355), not inside it — `verify-client.js` calls `htmlParas`, `xmlEsc`, `slides`, `setStatus`, `sanitizeHtml`, which must already exist as globals by the time it loads (they do, since it's a `<script>` tag placed after them, and browsers run same-page scripts in document order).
 
-- [ ] **Step 4: Manually verify end-to-end in the browser**
+- [ ] **Step 3: Manually verify end-to-end in the browser**
 
 1. Run: `cd server && npm start` (with real or dummy keys in `server/.env`)
-2. Open `주간보고서_작성기.html` directly in a browser (double-click or `file://` URL)
+2. Open `주간보고서_작성기.html` directly in a browser (double-click or `file://` URL) — confirm no console errors on load (verifies `verify-client.js` loaded and found its dependencies)
 3. Click "+ 페이지 추가", fill in some 금주 실적/차주계획 text
 4. Click "🔍 내용 검증"
 5. Expected: status shows "내용 검증 중..." then "내용 검증 완료", and a panel appears with "Gemini" and "GPT" columns side-by-side showing findings (or "문제 없음" if none)
 
-- [ ] **Step 5: Manually verify error handling**
+- [ ] **Step 4: Manually verify error handling**
 
 1. Stop the server (Ctrl+C)
 2. Click "🔍 내용 검증" again
 3. Expected: status bar shows "검증 서버(localhost:3001)에 연결할 수 없습니다. server 폴더에서 서버를 먼저 실행하세요." and no panel/crash
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add "주간보고서_작성기.html"
@@ -752,6 +702,7 @@ git commit -m "feat: wire content verification button into the report editor pag
 
 ## Self-Review Notes
 
-- **Spec coverage:** All spec sections map to tasks — architecture (Tasks 1-4), server component (Tasks 1-4), client component (Tasks 5-6), error handling (Task 4 status-code path, Task 6 Step 5 manual check), testing (automated for server in Tasks 1-4, manual for client in Task 6).
-- **Type/name consistency:** `slides` payload shape (`{month, week, team, leftText, rightText}`) is identical across `promptBuilder.js`, `geminiClient.js`, `gptClient.js`, `index.js`, and both client-side call sites. Response shape (`{gemini, gpt}` each `{slideResults} | {error}`) is consistent from `index.js` through to `renderVerifyColumn`.
-- **Out of scope carried over from spec:** no serverless deployment, no pre-generation HTML verification, no automatic merge of duplicate issues across models.
+- **Spec coverage:** All spec sections map to tasks — architecture (Tasks 1-4), server component (Tasks 1-4), client component (Tasks 5-6), error handling (Task 4 status-code path, Task 6 Step 4 manual check), testing (automated for server in Tasks 1-4, manual for client in Task 6).
+- **Type/name consistency:** `slides` payload shape (`{month, week, team, leftText, rightText}`) is identical across `promptBuilder.js`, `geminiClient.js`, `gptClient.js`, `index.js`, and the client-side call site in `verify-client.js`. Response shape (`{gemini, gpt}` each `{slideResults} | {error}`) is consistent from `index.js` through to `renderVerifyColumn`.
+- **No duplication:** the verify feature's browser code exists in exactly one file (`verify-client.js`), loaded by reference from the host page rather than copy-pasted, avoiding the duplication an earlier draft of this plan had between `pptx_code.js` and the host HTML.
+- **Out of scope carried over from spec:** no serverless deployment, no pre-generation HTML verification, no automatic merge of duplicate issues across models. `pptx_code.js` is intentionally left unmodified by this feature.

@@ -52,14 +52,18 @@
 - `server/package.json` — 의존성: `express`, `cors`, `dotenv` (fetch는 Node 내장 사용)
 - CORS는 페이지 origin만 허용
 
-### 클라이언트 (`pptx_code.js` 확장)
+### 클라이언트 (`verify-client.js` 신설)
 
-- `extractPlainText(html)` — 기존 `htmlParas()`/`parasToOoxml()` 파이프라인에서 OOXML 변환 전 단계의 순수 텍스트만 뽑는 헬퍼로 신설
+실제 사용 중인 호스트 파일(`주간보고서_작성기.html`)은 `pptx_code.js`를 `<script src>`로 불러오는 게 아니라 동일한 로직을 자체적으로 인라인 내장하고 있다. 새 검증 기능까지 두 곳(=`pptx_code.js`와 호스트 인라인 스크립트)에 똑같이 복사하면 코드 중복이 생기므로, 검증 기능은 **`verify-client.js`라는 새 파일 하나에만** 구현하고 호스트 HTML은 이를 `<script src="verify-client.js">`로 로드해 재사용한다. `pptx_code.js`(핵심 OOXML 생성 로직 참조 파일)는 이 UI 기능과 무관하므로 수정하지 않는다.
+
+- `verify-client.js`가 의존하는 호스트 전역: `htmlParas(html)`, `xmlEsc(s)`, `slides` 배열, `setStatus(msg)`, `sanitizeHtml(html)` — 모두 호스트 HTML에 이미 존재
+- `extractPlainText(html)` — `htmlParas()` 결과에서 `empty` 타입을 제외한 텍스트만 이어붙이는 헬퍼
 - `async function verifyContent()`:
-  1. `savePptx()`와 동일한 슬라이드 순회 로직으로 각 슬라이드의 `leftHtml`/`rightHtml`을 `extractPlainText`로 텍스트화
-  2. `{ slides: [...] }`를 `POST http://localhost:3001/verify`로 전송
-  3. 응답을 받아 결과를 렌더링
-- 호스트 HTML에 새 버튼 `btnVerify` 추가 (버튼 자체는 호스트 페이지, `pptx_code.js`는 기존 `btnPptx` 패턴과 동일하게 클릭 핸들러만 등록)
+  1. DOM(`left_<id>`/`right_<id>`)이 존재하면 `sanitizeHtml()`로 `slides[].leftHtml`/`rightHtml`을 동기화 (기존 `savePptx()`와 동일한 패턴)
+  2. 각 슬라이드의 `leftHtml`/`rightHtml`을 `extractPlainText`로 텍스트화
+  3. `{ slides: [...] }`를 `POST http://localhost:3001/verify`로 전송
+  4. 응답을 받아 결과를 렌더링
+- 호스트 HTML에 새 버튼 `btnVerify` 추가 (기존 `btnPptx` 패턴과 동일하게 `onclick="verifyContent()"`)
 - 결과 표시용 패널을 동적으로 DOM에 생성: 슬라이드별로 행을 만들고 Gemini 열 | GPT 열로 나란히 비교
 - `setStatus()`로 진행 상태 표시 ("검증 중...", "완료", 에러 메시지)
 
