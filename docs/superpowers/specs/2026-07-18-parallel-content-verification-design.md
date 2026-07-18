@@ -50,7 +50,7 @@
   - 응답: `{ gemini: { slideResults: [...] } | { error }, gpt: { slideResults: [...] } | { error } }`
 - `server/.env` — `GEMINI_API_KEY`, `OPENAI_API_KEY`, `PORT`(기본 3001)
 - `server/package.json` — 의존성: `express`, `cors`, `dotenv` (fetch는 Node 내장 사용)
-- CORS는 페이지 origin만 허용
+- CORS는 별도 origin 제한 없이 허용 (호스트 페이지가 `file://`로 열려 origin이 `null`이 되므로 특정 origin 허용 목록을 두는 것이 의미가 없음). 서버가 로컬(`localhost`)에만 바인딩되는 것으로 위협 범위를 제한한다.
 
 ### 클라이언트 (`verify-client.js` 신설)
 
