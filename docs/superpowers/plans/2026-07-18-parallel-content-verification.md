@@ -215,6 +215,16 @@ test('callGemini returns an error when the API responds with a non-OK status', a
   );
   assert.strictEqual(result.error, 'Gemini API 오류 (429): rate limited');
 });
+
+test('callGemini returns an error instead of throwing when fetch itself rejects', async () => {
+  const fakeFetch = async () => { throw new Error('network down'); };
+  const result = await callGemini(
+    [{ month: 7, week: 3, team: '팀', leftText: 'a', rightText: 'b' }],
+    'fake-key',
+    fakeFetch
+  );
+  assert.strictEqual(result.error, 'Gemini 호출 실패: network down');
+});
 ```
 
 - [ ] **Step 2: Run tests to verify they fail**
@@ -224,7 +234,7 @@ Expected: FAIL — `Cannot find module './geminiClient'`
 
 - [ ] **Step 3: Implement `geminiClient.js`**
 
-Create `server/geminiClient.js`:
+Create `server/geminiClient.js`. The whole fetch/parse pipeline is wrapped in try/catch so `callGemini` always resolves to `{ slideResults } | { error }` and never rejects — this matters because Task 4's `/verify` route needs each provider's outcome to be a normal value it can put in a JSON response, not a rejection it has to unwrap:
 
 ```js
 const { buildVerifyPrompt, parseSlideResults } = require('./promptBuilder');
@@ -235,23 +245,27 @@ async function callGemini(slides, apiKey, fetchImpl) {
   const doFetch = fetchImpl || fetch;
   if (!apiKey) return { error: 'API 키가 설정되지 않았습니다' };
 
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL
-    + ':generateContent?key=' + apiKey;
-  const res = await doFetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents: [{ parts: [{ text: buildVerifyPrompt(slides) }] }] })
-  });
-  if (!res.ok) {
-    const body = await res.text();
-    return { error: 'Gemini API 오류 (' + res.status + '): ' + body };
+  try {
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL
+      + ':generateContent?key=' + apiKey;
+    const res = await doFetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: buildVerifyPrompt(slides) }] }] })
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      return { error: 'Gemini API 오류 (' + res.status + '): ' + body };
+    }
+    const data = await res.json();
+    const text = data.candidates && data.candidates[0] && data.candidates[0].content
+      && data.candidates[0].content.parts && data.candidates[0].content.parts[0]
+      && data.candidates[0].content.parts[0].text;
+    if (!text) return { error: 'Gemini 응답에 텍스트가 없습니다' };
+    return parseSlideResults(text);
+  } catch (e) {
+    return { error: 'Gemini 호출 실패: ' + e.message };
   }
-  const data = await res.json();
-  const text = data.candidates && data.candidates[0] && data.candidates[0].content
-    && data.candidates[0].content.parts && data.candidates[0].content.parts[0]
-    && data.candidates[0].content.parts[0].text;
-  if (!text) return { error: 'Gemini 응답에 텍스트가 없습니다' };
-  return parseSlideResults(text);
 }
 
 module.exports = { callGemini, GEMINI_MODEL };
@@ -260,7 +274,7 @@ module.exports = { callGemini, GEMINI_MODEL };
 - [ ] **Step 4: Run tests to verify they pass**
 
 Run: `cd server && npm test`
-Expected: PASS — 7 tests passing total (4 from Task 1 + 3 new).
+Expected: PASS — 8 tests passing total (4 from Task 1 + 4 new).
 
 - [ ] **Step 5: Commit**
 
@@ -319,6 +333,16 @@ test('callGpt returns an error when the API responds with a non-OK status', asyn
   );
   assert.strictEqual(result.error, 'GPT API 오류 (401): invalid key');
 });
+
+test('callGpt returns an error instead of throwing when fetch itself rejects', async () => {
+  const fakeFetch = async () => { throw new Error('network down'); };
+  const result = await callGpt(
+    [{ month: 7, week: 3, team: '팀', leftText: 'a', rightText: 'b' }],
+    'fake-key',
+    fakeFetch
+  );
+  assert.strictEqual(result.error, 'GPT 호출 실패: network down');
+});
 ```
 
 - [ ] **Step 2: Run tests to verify they fail**
@@ -328,7 +352,7 @@ Expected: FAIL — `Cannot find module './gptClient'`
 
 - [ ] **Step 3: Implement `gptClient.js`**
 
-Create `server/gptClient.js`:
+Create `server/gptClient.js`. Same as `geminiClient.js` in Task 2, the fetch/parse pipeline is wrapped in try/catch so `callGpt` always resolves to `{ slideResults } | { error }` and never rejects:
 
 ```js
 const { buildVerifyPrompt, parseSlideResults } = require('./promptBuilder');
@@ -339,25 +363,29 @@ async function callGpt(slides, apiKey, fetchImpl) {
   const doFetch = fetchImpl || fetch;
   if (!apiKey) return { error: 'API 키가 설정되지 않았습니다' };
 
-  const res = await doFetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey
-    },
-    body: JSON.stringify({
-      model: GPT_MODEL,
-      messages: [{ role: 'user', content: buildVerifyPrompt(slides) }]
-    })
-  });
-  if (!res.ok) {
-    const body = await res.text();
-    return { error: 'GPT API 오류 (' + res.status + '): ' + body };
+  try {
+    const res = await doFetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey
+      },
+      body: JSON.stringify({
+        model: GPT_MODEL,
+        messages: [{ role: 'user', content: buildVerifyPrompt(slides) }]
+      })
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      return { error: 'GPT API 오류 (' + res.status + '): ' + body };
+    }
+    const data = await res.json();
+    const text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (!text) return { error: 'GPT 응답에 텍스트가 없습니다' };
+    return parseSlideResults(text);
+  } catch (e) {
+    return { error: 'GPT 호출 실패: ' + e.message };
   }
-  const data = await res.json();
-  const text = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-  if (!text) return { error: 'GPT 응답에 텍스트가 없습니다' };
-  return parseSlideResults(text);
 }
 
 module.exports = { callGpt, GPT_MODEL };
@@ -366,7 +394,7 @@ module.exports = { callGpt, GPT_MODEL };
 - [ ] **Step 4: Run tests to verify they pass**
 
 Run: `cd server && npm test`
-Expected: PASS — 10 tests passing total.
+Expected: PASS — 12 tests passing total (4 from Task 1 + 4 from Task 2 + 4 new).
 
 - [ ] **Step 5: Commit**
 
@@ -504,7 +532,7 @@ module.exports = { createApp };
 - [ ] **Step 4: Run tests to verify they pass**
 
 Run: `cd server && npm test`
-Expected: PASS — 12 tests passing total.
+Expected: PASS — 14 tests passing total (12 from Tasks 1-3 + 2 new).
 
 - [ ] **Step 5: Manually verify the server boots**
 
