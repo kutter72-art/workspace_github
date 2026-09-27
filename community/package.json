@@ -1,0 +1,11 @@
+{
+  "name": "office-worker-community",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "직장인 커뮤니티 재구성 프로토타입 — 서버 저장 기반",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/"
+  }
+}

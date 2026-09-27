@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{DESC}}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{DESC}}">
+  <meta property="og:site_name" content="오늘의 직장인">
+  <meta name="theme-color" content="#FBFAF7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#171614" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232F6B5E'/%3E%3Cpath d='M9 20.5c2.2-6 4.4-9 7-9s4.8 3 7 9' stroke='%23FBFAF7' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body data-path="{{PATH}}">
+
+  <a class="skip-link" href="#view">본문으로 건너뛰기</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" data-link>
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <strong>오늘의 직장인</strong>
+          <small>점심에서 시작하는 아지트</small>
+        </span>
+      </a>
+
+      <nav class="topnav" aria-label="주요 메뉴">
+        <a href="/"      data-link data-tab="today">오늘</a>
+        <a href="/lunch" data-link data-tab="lunch">점심</a>
+        <a href="/talk"  data-link data-tab="talk">토크</a>
+        <a href="/break" data-link data-tab="break">숨돌리기</a>
+        <a href="/grow"  data-link data-tab="grow">성장</a>
+      </nav>
+
+      <div class="topbar-right">
+        <button type="button" class="btn-ghost" id="themeToggle" aria-label="밝은 화면과 어두운 화면 전환">
+          <span data-icon="theme"></span>
+        </button>
+        <a href="/me" data-link class="identity-chip" id="identityChip" aria-label="내 서랍">
+          <span class="lv" id="identityLevel">L0</span>
+          <span class="nm" id="identityNick">손님</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="view" tabindex="-1">
+    <div class="skeleton-page" aria-hidden="true">
+      <div class="sk sk-title"></div>
+      <div class="sk sk-line"></div>
+      <div class="sk sk-card"></div>
+      <div class="sk sk-card"></div>
+    </div>
+  </main>
+
+  <nav class="bottomnav" aria-label="주요 메뉴">
+    <a href="/"      data-link data-tab="today"><span data-icon="today"></span><span>오늘</span></a>
+    <a href="/lunch" data-link data-tab="lunch"><span data-icon="lunch"></span><span>점심</span></a>
+    <a href="/talk"  data-link data-tab="talk"><span data-icon="talk"></span><span>토크</span></a>
+    <a href="/break" data-link data-tab="break"><span data-icon="break"></span><span>숨돌리기</span></a>
+    <a href="/grow"  data-link data-tab="grow"><span data-icon="grow"></span><span>성장</span></a>
+  </nav>
+
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+  <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+    <div class="sheet-head">
+      <h2 id="sheetTitle">글쓰기</h2>
+      <button type="button" class="btn-ghost" id="sheetClose" aria-label="닫기"><span data-icon="close"></span></button>
+    </div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </section>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite" role="status"></div>
+
+  <footer class="sitefoot">
+    <div class="sitefoot-inner">
+      <p>오늘의 직장인 · 재구성 프로토타입</p>
+      <p class="foot-links">
+        <a href="/me" data-link>내 서랍</a>
+        <span aria-hidden="true">·</span>
+        <span class="foot-note">이용약관 · 개인정보처리방침 — 정식 오픈 전 게시 예정</span>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/assets/app.js" type="module"></script>
+</body>
+</html>

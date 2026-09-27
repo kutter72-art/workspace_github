@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "community",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["community/server.js"],
+      "port": 4173
+    }
+  ]
+}
